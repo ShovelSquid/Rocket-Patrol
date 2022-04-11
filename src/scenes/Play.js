@@ -1,5 +1,3 @@
-const { Phaser } = require("../../lib/phaser");
-
 class Play extends Phaser.Scene {
     constructor() {
         super("playScene");
@@ -77,20 +75,16 @@ class Play extends Phaser.Scene {
         this.gameOver = false;
         // Final timer!
         scoreConfig.fixedWidth = 0;
-        this.clock = this.time.delayedCall(1000, () => {
+        this.clock = this.time.delayedCall(game.settings.gameTimer , () => {
             this.add.text(game.config.width/2, game.config.height/2, 
             'GAME OVER', scoreConfig).setOrigin(0.5);
             this.add.text(game.config.width/2, game.config.height/2 + borderUISize, 
-            'Press [R] to Restart', scoreConfig).setOrigin(0.5);
+            'Press [R] to Restart or <-- for Menu', scoreConfig).setOrigin(0.5);
             this.gameOver = true;
         }, null, this);
     }
 
     update() {
-        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
-            this.scene.restart();
-        }
-
         this.background.tilePositionX -= 2;
         this.starfield.tilePositionX -= 4;
         if (!this.gameOver) {
@@ -98,6 +92,16 @@ class Play extends Phaser.Scene {
             this.ship01.update();
             this.ship02.update();
             this.ship03.update();
+        }
+
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyR)) {
+            console.log("we're out");
+            this.scene.restart();
+        }
+
+        if (this.gameOver && Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+            console.log("back to the menu, boys");
+            this.scene.start('menuScene');
         }
 
         if (this.checkCollision(this.p1Rocket, this.ship01)) {
@@ -140,8 +144,9 @@ class Play extends Phaser.Scene {
             ship.alpha = 1;                     // turn ship back on
             boom.destroy();                     // bye bye explosion sprite
         });
-        // add and display new score :
+        // add and display new score : 
         this.p1Score += ship.points;
         this.scoreLeft.text = this.p1Score;
+        this.sound.play('sfx_explosion');
     }
 }
