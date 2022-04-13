@@ -35,27 +35,49 @@ class Menu extends Phaser.Scene {
         // define Keys :
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+        keyLEFT.on('down', () => {
+            console.log('yeah we goin easy')
+            this.startGame('easy');
+        })
+        keyRIGHT.on('down', () => {
+            console.log('THIS AINT LIKE THE SIMULATIONS');
+            this.startGame('hard');
+        })
     }
 
-    update() {
-        if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
-            // easy mode
+    // update() {
+    //     // if (Phaser.Input.Keyboard.JustDown(keyLEFT)) {
+    //     //     // easy mode
+
+    //     //     this.sound.play('sfx_select');
+    //     //     this.scene.start('playScene');
+    //     // }
+
+    //     // if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
+    //     //     // hard mode
+
+    //     //     this.sound.play('sfx_select');
+    //     //     this.scene.start('playScene');
+    //     // }
+    // }
+
+    // why even have update lol
+
+    startGame(difficulty) {
+        if (difficulty == 'easy') {
             game.settings = {
                 spaceshipSpeed: 4,
                 gameTimer: 60000
             };
-            this.sound.play('sfx_select');
-            this.scene.start('playScene');
         }
-
-        if (Phaser.Input.Keyboard.JustDown(keyRIGHT)) {
-            // hard mode
+        if (difficulty == 'hard') {
             game.settings = {
                 spaceshipSpeed: 6,
                 gameTimer: 45000
             };
-            this.sound.play('sfx_select');
-            this.scene.start('playScene');
         }
+        this.sound.play('sfx_select');
+        this.scene.start('playScene');
     }
 }

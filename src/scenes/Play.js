@@ -9,7 +9,7 @@ class Play extends Phaser.Scene {
         this.load.image('background', './assets/background.png');
         this.load.image('starfield', './assets/frontground.png');
         // load spritesheet :
-        this.load.spritesheet('explosion', './assets/explosion-Sheet.png', 
+        this.load.spritesheet('explosion', './assets/explosion-Sheet.png',
         {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 11});
     }
     create() {
@@ -135,7 +135,7 @@ class Play extends Phaser.Scene {
 
     shipExplode(ship) {
         // temporarily HIDE the ship . ____ . 
-        ship.alpha = 0;
+        ship.alpha = 0;                         // GHOST SHIP: Still hittable during explosion
         // add boom explosion 
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
         boom.anims.play('explode');             // play explosion animation

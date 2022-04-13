@@ -6,7 +6,8 @@ class Rocket extends Phaser.GameObjects.Sprite {
         // add to existing scene :
         scene.add.existing(this);       // adds to existing scene, some fun with updates and displays
         this.isFiring = false;          // boolean to see if firing, currently it isn't. YET
-        this.moveSpeed = 2;             // SPEED  // (in pixels per frame)
+        this.moveSpeed = 7;             // SPEED  // (in pixels per frame)
+        this.fireSpeed = 15;
 
         // add sound effect :
         this.sfxRocket = scene.sound.add('sfx_rocket');         // add the rocket sound effect
@@ -32,7 +33,7 @@ class Rocket extends Phaser.GameObjects.Sprite {
 
         // if fired, move up
         if (this.isFiring && this.y >= borderUISize * 3 + borderPadding) {
-            this.y -= this.moveSpeed;
+            this.y -= this.fireSpeed;
         }
 
         // reset on miss
