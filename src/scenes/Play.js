@@ -4,18 +4,18 @@ class Play extends Phaser.Scene {
     }
     preload() {
         // load in the required assets :
-        this.load.image('rocket', './assets/rocket.png');
-        this.load.image('spaceship', './assets/locust.png');
+        this.load.image('rocket', './assets/rocket-200.png');
+        this.load.image('spaceship', './assets/locust-200.png');
         this.load.image('background', './assets/background.png');
         this.load.image('starfield', './assets/frontground.png');
         // load spritesheet :
-        this.load.spritesheet('explosion', './assets/explosion-Sheet.png',
-        {frameWidth: 64, frameHeight: 32, startFrame: 0, endFrame: 11});
+        this.load.spritesheet('explosion', './assets/explosion-Sheet-200.png',
+        {frameWidth: 64*2, frameHeight: 32*2, startFrame: 0, endFrame: 11});
     }
     create() {
         // add a starfield background
-        this.background = this.add.tileSprite(0, 0, 640, 480, 'background').setOrigin(0, 0);
-        this.starfield = this.add.tileSprite(0, 0, 640, 480, 'starfield').setOrigin(0, 0);
+        this.background = this.add.tileSprite(0, 0, 640*scale, 480*scale, 'background').setOrigin(0, 0);
+        this.starfield = this.add.tileSprite(0, 0, 640*scale, 480*scale, 'starfield').setOrigin(0, 0);
         // Background rectangles
         this.add.rectangle(0, borderUISize + borderPadding,
             game.config.width, borderUISize * 2, 0x03FEA3).setOrigin(0, 0);
@@ -135,13 +135,15 @@ class Play extends Phaser.Scene {
 
     shipExplode(ship) {
         // temporarily HIDE the ship . ____ . 
-        ship.alpha = 0;                         // GHOST SHIP: Still hittable during explosion
+        ship.alpha = 0.5;
+        ship.moveSpeed = 0;                     // stop ship from moving
         // add boom explosion 
         let boom = this.add.sprite(ship.x, ship.y, 'explosion').setOrigin(0, 0);
+        ship.reset();
         boom.anims.play('explode');             // play explosion animation
         boom.on('animationcomplete', () => {    // callback after animation done
-            ship.reset();                       // reset ship position
             ship.alpha = 1;                     // turn ship back on
+            ship.moveSpeed = ship.baseSpeed;    // allow it to move again
             boom.destroy();                     // bye bye explosion sprite
         });
         // add and display new score : 
