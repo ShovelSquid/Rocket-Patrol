@@ -67,13 +67,13 @@ class Menu extends Phaser.Scene {
     startGame(difficulty) {
         if (difficulty == 'easy') {
             game.settings = {
-                spaceshipSpeed: 4,
+                carSpeed: 4,
                 gameTimer: 60000
             };
         }
         if (difficulty == 'hard') {
             game.settings = {
-                spaceshipSpeed: 6,
+                carSpeed: 6,
                 gameTimer: 45000
             };
         }
