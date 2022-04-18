@@ -5,8 +5,10 @@ class Play extends Phaser.Scene {
     preload() {
         // load in the required assets :
         // FROGS
-        // this.load.image('rocket', './assets/FROG-200.png');
-        this.load.spritesheet('frog', './assets/FROGSheet-200.png', 
+        // this.load.image('Frog', './assets/FROG-200.png');
+        this.load.spritesheet('greenFrog', './assets/greenFROGSheet-200.png', 
+        {frameWidth: 32*2, frameHeight: 32*2, startFrame: 0, endFrame: 2});
+        this.load.spritesheet('redFrog', './assets/redFROGSheet-200.png', 
         {frameWidth: 32*2, frameHeight: 32*2, startFrame: 0, endFrame: 2});
         // other less gigachad things
         this.load.image('car', './assets/car-200.png');
@@ -32,9 +34,23 @@ class Play extends Phaser.Scene {
         this.add.rectangle(game.config.width - borderUISize, 0, 
             borderUISize, game.config.height, 0xFFFFAA).setOrigin(0, 0);
 
-        // add player one rocket :
-        this.p1Rocket = new Rocket(this, game.config.width/2, 
-        game.config.height - borderUISize - borderPadding*3, 'frog').setOrigin(0.5, 0);
+        // define input :
+        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyUP = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+        keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+        keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+        
+        // add player one frog :
+        this.p1Frog = new Frog(this, game.config.width/2 - borderUISize, 
+        game.config.height - borderUISize - borderPadding*3, 'greenFrog', 0, 
+        keyLEFT, keyRIGHT, keyUP).setOrigin(0.5, 0);
+        // add player two frog : 
+        this.p2Frog = new Frog(this, game.config.width/2 + borderUISize, 
+        game.config.height - borderUISize - borderPadding*3, 'redFrog', 0, 
+        keyA, keyD, keyW).setOrigin(0.5, 0);
 
         // add cars :
         this.ship01 = new Car(this, game.config.width + borderUISize * 6, 
@@ -44,11 +60,7 @@ class Play extends Phaser.Scene {
         this.ship03 = new Car(this, game.config.width, 
             borderUISize * 6, 'car', 0, 10).setOrigin(0, 0);
 
-        // define input :
-        keySPACE = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-        keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
 
         // animation config :
         // explosion animation
@@ -57,31 +69,54 @@ class Play extends Phaser.Scene {
             frames: this.anims.generateFrameNumbers('explosion', {start: 0, end: 11, first: 0}),
             frameRate: 12
         });
-        // Frog animations :
+        // Green Frog animations :
         // idle frog animation
-        this.anims.create( {
-            key: 'idle',
-            frames: this.anims.generateFrameNumbers('frog', {start: 0, end: 0, first: 0}),
+        this.anims.create({
+            key: 'greenIdle',
+            frames: this.anims.generateFrameNumbers('greenFrog', {start: 0, end: 0, first: 0}),
             frameRate: 0,
             repeat: -1,
         });
         // charging frog animation
         this.anims.create({ 
-            key: 'charge',
-            frames: this.anims.generateFrameNumbers('frog', {start: 1, end: 1, first: 1}),       // first might be 0?
+            key: 'greenCharge',
+            frames: this.anims.generateFrameNumbers('greenFrog', {start: 1, end: 1, first: 1}),
             frameRate: 0,
             repeat: -1,
         });
         // mega frog
         this.anims.create( {
-            key: 'launch',
-            frames: this.anims.generateFrameNumbers('frog', {start: 2, end: 2, first: 2}),
+            key: 'greenLaunch',
+            frames: this.anims.generateFrameNumbers('greenFrog', {start: 2, end: 2, first: 2}),
             frameRate: 0,
             repeat: -1,
+        });
+        // Red Frog animations : 
+        // idle frog animation
+        this.anims.create({
+            key: 'redIdle',
+            frames: this.anims.generateFrameNumbers('redFrog', {start: 0, end: 0, first: 0}), 
+            frameRate: 0,
+            repeat: -1
+        });
+        // charging frog animation
+        this.anims.create({ 
+            key: 'redCharge', 
+            frames: this.anims.generateFrameNumbers('redFrog', {start: 1, end: 1, first: 1}),
+            frameRate: 0,
+            repeat: -1
+        });
+        // launching frog animation
+        this.anims.create({
+            key: 'redLaunch',
+            frames: this.anims.generateFrameNumbers('redFrog', {start: 2, end: 2, first: 2}),
+            frameRate: 0,
+            repeat: -1
         });
 
         // score!
         this.p1Score = 0;
+        this.p2Score = 0;
 
         let scoreConfig = {
             fontFamily: 'Courier',
@@ -95,8 +130,12 @@ class Play extends Phaser.Scene {
             },
             fixedWidth: 100
         }
+        // player one score display
         this.scoreLeft = this.add.text(borderUISize + borderPadding, 
-            borderUISize + borderPadding * 2, this.p1Score, scoreConfig);
+            borderUISize + borderPadding * 2, this.p1Score, scoreConfig).setOrigin(0, 0);
+        // player two score display
+        this.scoreRight = this.add.text(game.config.width - borderUISize - borderPadding, 
+            borderUISize + borderPadding * 2, this.p2Score, scoreConfig).setOrigin(1, 0);
         
         // GAME OVER flag?
         this.gameOver = false;
@@ -115,7 +154,8 @@ class Play extends Phaser.Scene {
         this.background.tilePositionX -= 2;
         this.highway.tilePositionX -= 4;
         if (!this.gameOver) {
-            this.p1Rocket.update();
+            this.p1Frog.update();
+            this.p2Frog.update();
             this.ship01.update();
             this.ship02.update();
             this.ship03.update();
@@ -131,36 +171,53 @@ class Play extends Phaser.Scene {
             this.scene.start('menuScene');
         }
 
-        if (this.checkCollision(this.p1Rocket, this.ship01)) {
+        // collision detection between player 1 and ships
+        if (this.checkCollision(this.p1Frog, this.ship01)) {
             console.log("ship 1 has been grounded");
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship01);
+            this.p1Frog.reset();
+            this.shipExplode(this.ship01, 1);
         }
-        if (this.checkCollision(this.p1Rocket, this.ship02)) {
+        if (this.checkCollision(this.p1Frog, this.ship02)) {
             console.log("we've got the middle bug!");
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship02);
+            this.p1Frog.reset();
+            this.shipExplode(this.ship02, 1);
         }
-        if (this.checkCollision(this.p1Rocket, this.ship03)) {
+        if (this.checkCollision(this.p1Frog, this.ship03)) {
             console.log("locust ship 3 destroyed!");
-            this.p1Rocket.reset();
-            this.shipExplode(this.ship03);
+            this.p1Frog.reset();
+            this.shipExplode(this.ship03, 1);
+        }
+        // collision detection between player 2 and ships
+        if (this.checkCollision(this.p2Frog, this.ship01)) {
+            console.log("ship 1 has been grounded");
+            this.p2Frog.reset();
+            this.shipExplode(this.ship01, 2);
+        }
+        if (this.checkCollision(this.p2Frog, this.ship02)) {
+            console.log("we've got the middle bug!");
+            this.p2Frog.reset();
+            this.shipExplode(this.ship02, 2);
+        }
+        if (this.checkCollision(this.p2Frog, this.ship03)) {
+            console.log("locust ship 3 destroyed!");
+            this.p2Frog.reset();
+            this.shipExplode(this.ship03, 2);
         }
     }
 
-    checkCollision(rocket, ship) {
+    checkCollision(frog, ship) {
         // AABB checking
-        if (rocket.x < ship.x + ship.width && 
-            rocket.x + rocket.width > ship.x && 
-            rocket.y < ship.y + ship.height && 
-            rocket.y + rocket.height > ship.y) {
+        if (frog.x < ship.x + ship.width && 
+            frog.x + frog.width > ship.x && 
+            frog.y < ship.y + ship.height && 
+            frog.y + frog.height > ship.y) {
                 return true;
         } else {
             return false;
         }
     }
 
-    shipExplode(ship) {
+    shipExplode(ship, player) {
         // temporarily HIDE the ship . ____ . 
         ship.alpha = 0.5;
         ship.moveSpeed = 0;                     // stop ship from moving
@@ -174,8 +231,14 @@ class Play extends Phaser.Scene {
             boom.destroy();                     // bye bye explosion sprite
         });
         // add and display new score : 
-        this.p1Score += ship.points;
-        this.scoreLeft.text = this.p1Score;
+        if (player == 1) {
+            this.p1Score += ship.points;
+            this.scoreLeft.text = this.p1Score;
+        }
+        else if (player == 2) {
+            this.p2Score += ship.points;
+            this.scoreRight.text = this.p2Score;
+        }
         this.sound.play('sfx_explosion');
     }
 }

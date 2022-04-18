@@ -13,7 +13,7 @@ let config = {
 let game = new Phaser.Game(config);
 
 // reserve input keys :
-let keyR, keySPACE, keyLEFT, keyRIGHT;
+let keyR, keyLEFT, keyRIGHT, keyUP, keyW, keyA, keyD;
 
 // set UI sizes :
 
