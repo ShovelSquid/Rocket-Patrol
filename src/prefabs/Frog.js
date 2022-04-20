@@ -24,21 +24,10 @@ class Frog extends Phaser.GameObjects.Sprite {
         console.log(texture);
         this.color = texture.replace('Frog', '');
         console.log(this.color);
-        // if (this.texture = 'greenFrog') {
-        //     console.log("GREEN FROG ALERT")
-        //     this.color = 'green';
-        // }
-        // if (this.texture = 'redFrog') {
-        //     console.log("RED FROG INCOMING");
-        //     this.color = 'red';
-        // }
-        // if (this.texture = 'banana') {
-        //     console.log('wacky willies inbound')
-        //     this.color = 'magma';
-        // }
 
         // add sound effect :
-        this.sfxRocket = scene.sound.add('sfx_rocket');         // add the rocket sound effect
+        this.sfxlaunch = scene.sound.add('sfx_launch');         // add the rocket sound effect
+        this.sfxcharge = scene.sound.add('sfx_charge');
     }
 
     update() {
@@ -63,6 +52,7 @@ class Frog extends Phaser.GameObjects.Sprite {
                 this.isCharging = true;             // charging mode is true
                 this.charge = this.minCharge;       // reset current charge to minimum
                 this.anims.play(this.color + 'Charge');
+                this.sfxcharge.play();
                 // Charging events
                 this.chargeLowest = this.scene.time.delayedCall(500, () => {        // after half a second, increase charge
                     console.log("Charging...")
@@ -76,7 +66,7 @@ class Frog extends Phaser.GameObjects.Sprite {
                     console.log("CHARGED!!")
                     this.charge = this.maxCharge;
                 }, null, this);
-                this.launch = this.scene.time.delayedCall(5000, () => {             // if 5 seconds pass, fire frog
+                this.launch = this.scene.time.delayedCall(4000, () => {             // if 4 seconds pass, fire frog
                     console.log("you waited too long >:(");
                     this.fire();
                 }, null, this);
@@ -103,6 +93,8 @@ class Frog extends Phaser.GameObjects.Sprite {
         this.isFiring = true;
         this.isCharging = false;
         this.anims.play(this.color + 'Launch');
+        this.sfxlaunch.play();
+        this.sfxcharge.stop();
         // release charge at speed
         this.fireSpeed = this.charge;
         this.scene.time.removeEvent([this.chargeLowest, this.chargeMid, this.chargeMax, this.launch]);      // keep events from going on in the background

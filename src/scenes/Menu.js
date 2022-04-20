@@ -4,9 +4,10 @@ class Menu extends Phaser.Scene {
     }
     preload() {
         // load audio
-        this.load.audio('sfx_select', './assets/blip_select12.wav');
-        this.load.audio('sfx_explosion', './assets/explosion38.wav');
-        this.load.audio('sfx_rocket', './assets/rocket_shot.wav');
+        this.load.audio('sfx_select', './assets/Frog_Patrol.m4a');
+        this.load.audio('sfx_explosion', './assets/Car_explodes.m4a');
+        this.load.audio('sfx_charge', './assets/Charging.m4a');
+        this.load.audio('sfx_launch', './assets/Launch.m4a')
     }
     create() {
         let menuConfig = {
@@ -26,7 +27,7 @@ class Menu extends Phaser.Scene {
         this.add.text(game.config.width/2, game.config.height/2 - borderUISize - borderPadding, 
         'Frog Patrol', menuConfig).setOrigin(0.5);
         this.add.text(game.config.width/2, game.config.height/2, 
-        'Use <-- --> arrows to move and (SPACE) to fire', menuConfig).setOrigin(0.5);
+        'Use <-- --> arrows to move and (UP) to fire', menuConfig).setOrigin(0.5);
         menuConfig.backgroundColor = '#00FF00';
         menuConfig.color = '#000';
         this.add.text(game.config.width/2, game.config.height/2 + borderUISize + borderPadding, 

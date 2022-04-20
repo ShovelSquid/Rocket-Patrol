@@ -12,7 +12,9 @@ class Play extends Phaser.Scene {
         {frameWidth: 32*2, frameHeight: 32*2, startFrame: 0, endFrame: 2});
         // other less gigachad things
         this.load.image('car', './assets/car-200.png');
-        this.load.image('background', './assets/background.png');
+        this.load.image('background', './assets/background-200.png');
+        this.load.image('cityback', './assets/cityback-200.png');
+        this.load.image('cityfront', './assets/cityfront-200.png');
         this.load.image('highway', './assets/highway-200.png');
         // load spritesheet :
         this.load.spritesheet('explosion', './assets/explosion-Sheet-200.png',
@@ -21,18 +23,10 @@ class Play extends Phaser.Scene {
     create() {
         // add a highway background
         this.background = this.add.tileSprite(0, 0, 640*scale, 480*scale, 'background').setOrigin(0, 0);
+        this.cityback = this.add.tileSprite(0, 0, 640*scale, 480*scale, 'cityback').setOrigin(0, 0);
+        this.cityfront = this.add.tileSprite(0, 0, 640*scale, 480*scale, 'cityfront').setOrigin(0, 0);
         this.highway = this.add.tileSprite(0, 0, 640*scale, 480*scale, 'highway').setOrigin(0, 0);
-        // Background rectangles
-        this.add.rectangle(0, borderUISize + borderPadding,
-            game.config.width, borderUISize * 2, 0x03FEA3).setOrigin(0, 0);
-        this.add.rectangle(0, 0, 
-            game.config.width, borderUISize, 0xFFFFAA).setOrigin(0, 0);
-        this.add.rectangle(0, game.config.height - borderUISize, 
-            game.config.width, borderUISize, 0xFFFFAA).setOrigin(0, 0);
-        this.add.rectangle(0, 0, 
-            borderUISize, game.config.height, 0xFFFFAA).setOrigin(0, 0);
-        this.add.rectangle(game.config.width - borderUISize, 0, 
-            borderUISize, game.config.height, 0xFFFFAA).setOrigin(0, 0);
+
 
         // define input :
         keyR = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -54,11 +48,24 @@ class Play extends Phaser.Scene {
 
         // add cars :
         this.ship01 = new Car(this, game.config.width + borderUISize * 6, 
-            borderUISize * 4, 'car', 0, 30).setOrigin(0, 0);
+            borderUISize * 3 + borderPadding, 'car', 0, 30).setOrigin(0, 0);
         this.ship02 = new Car(this, game.config.width + borderUISize * 3, 
-            borderUISize * 5, 'car', 0, 20).setOrigin(0, 0);
+            borderUISize * 4 + borderPadding * 2, 'car', 0, 20).setOrigin(0, 0);
         this.ship03 = new Car(this, game.config.width, 
             borderUISize * 6, 'car', 0, 10).setOrigin(0, 0);
+
+
+        // Background rectangles
+        // this.add.rectangle(0, borderUISize + borderPadding,
+        //     game.config.width, borderUISize * 2, 0x03FEA3).setOrigin(0, 0);
+        this.add.rectangle(0, 0, 
+            game.config.width, borderUISize, 0xFFFFAA).setOrigin(0, 0);
+        this.add.rectangle(0, game.config.height - borderUISize, 
+            game.config.width, borderUISize, 0xFFFFAA).setOrigin(0, 0);
+        this.add.rectangle(0, 0, 
+            borderUISize, game.config.height, 0xFFFFAA).setOrigin(0, 0);
+        this.add.rectangle(game.config.width - borderUISize, 0, 
+            borderUISize, game.config.height, 0xFFFFAA).setOrigin(0, 0);        
 
 
 
@@ -131,9 +138,11 @@ class Play extends Phaser.Scene {
             fixedWidth: 100
         }
         // player one score display
+        scoreConfig.color = '#0AFF0A';
         this.scoreLeft = this.add.text(borderUISize + borderPadding, 
             borderUISize + borderPadding * 2, this.p1Score, scoreConfig).setOrigin(0, 0);
         // player two score display
+        scoreConfig.color = '#FF0A0A';
         this.scoreRight = this.add.text(game.config.width - borderUISize - borderPadding, 
             borderUISize + borderPadding * 2, this.p2Score, scoreConfig).setOrigin(1, 0);
         
@@ -151,7 +160,8 @@ class Play extends Phaser.Scene {
     }
 
     update() {
-        this.background.tilePositionX -= 2;
+        this.cityback.tilePositionX -= 1;
+        this.cityfront.tilePositionX -= 3;
         this.highway.tilePositionX -= 4;
         if (!this.gameOver) {
             this.p1Frog.update();
